@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Refine It!</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <img src="icons/icon48.png" class="header-icon" alt="Refine It!" />
+        <div>
+          <h1>Refine It!</h1>
+          <p class="subtext">AI-powered text rewriting on any website.</p>
+        </div>
+      </header>
+
+      <!-- ── AI Provider & Model ── -->
+      <section class="card">
+        <p class="label">AI Provider &amp; Model</p>
+
+        <div class="provider-tabs" id="providerTabs">
+          <button class="tab-btn active" data-provider="openrouter">OpenRouter</button>
+          <button class="tab-btn" data-provider="openai">ChatGPT</button>
+          <button class="tab-btn" data-provider="gemini">Gemini</button>
+        </div>
+
+        <!-- OpenRouter panel -->
+        <div class="provider-panel" id="panel-openrouter">
+          <label class="sublabel" for="orKey">API Key</label>
+          <div class="api-row">
+            <input id="orKey" type="password" placeholder="sk-or-v1-..." autocomplete="off" />
+            <button id="saveOrKey" class="secondary-button">Save</button>
+          </div>
+          <label class="sublabel mt8" for="orModel">Model</label>
+          <select id="orModel">
+            <optgroup label="Meta Llama">
+              <option value="meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B Instruct (fast, free)</option>
+              <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B Instruct</option>
+              <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B Instruct</option>
+            </optgroup>
+            <optgroup label="Mistral">
+              <option value="mistralai/mistral-7b-instruct">Mistral 7B Instruct (free)</option>
+              <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8×7B Instruct</option>
+            </optgroup>
+            <optgroup label="Google">
+              <option value="google/gemma-3-27b-it">Gemma 3 27B (free)</option>
+            </optgroup>
+            <optgroup label="DeepSeek">
+              <option value="deepseek/deepseek-chat">DeepSeek Chat</option>
+              <option value="deepseek/deepseek-r1">DeepSeek R1</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- ChatGPT panel -->
+        <div class="provider-panel hidden" id="panel-openai">
+          <label class="sublabel" for="oaiKey">OpenAI API Key</label>
+          <div class="api-row">
+            <input id="oaiKey" type="password" placeholder="sk-..." autocomplete="off" />
+            <button id="saveOaiKey" class="secondary-button">Save</button>
+          </div>
+          <label class="sublabel mt8" for="oaiModel">Model</label>
+          <select id="oaiModel">
+            <option value="gpt-4o-mini">GPT-4o Mini (fast &amp; affordable)</option>
+            <option value="gpt-4o">GPT-4o</option>
+            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          </select>
+        </div>
+
+        <!-- Gemini panel -->
+        <div class="provider-panel hidden" id="panel-gemini">
+          <label class="sublabel" for="gemKey">Google AI API Key</label>
+          <div class="api-row">
+            <input id="gemKey" type="password" placeholder="AIza..." autocomplete="off" />
+            <button id="saveGemKey" class="secondary-button">Save</button>
+          </div>
+          <label class="sublabel mt8" for="gemModel">Model</label>
+          <select id="gemModel">
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (fast)</option>
+            <option value="gemini-2.0-flash-thinking-exp">Gemini 2.0 Flash Thinking</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- ── Settings ── -->
+      <section class="card">
+        <p class="label">Settings</p>
+        <div class="setting-row">
+          <span class="setting-label">Language auto-detect</span>
+          <label class="toggle">
+            <input type="checkbox" id="langDetect" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="tiny muted">Rewrites will match the language of your selected text automatically.</p>
+        <div class="setting-row mt8">
+          <span class="setting-label">Context-aware rewriting</span>
+          <label class="toggle">
+            <input type="checkbox" id="contextAware" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <p class="tiny muted">The AI reads surrounding sentences to better understand the intent before rewriting.</p>
+      </section>
+
+      <!-- ── Actions ── -->
+      <section class="card">
+        <p class="label">Quick actions</p>
+        <div class="grid">
+          <button class="action-button" data-mode="fix">✦ Fix grammar</button>
+          <button class="action-button" data-mode="clarity">✦ Improve clarity</button>
+          <button class="action-button" data-mode="shorten">✦ Shorten</button>
+          <button class="action-button" data-mode="polish">✦ Polish</button>
+          <button class="action-button" data-mode="professional">✦ Professional</button>
+          <button class="action-button" data-mode="friendly">✦ Friendly</button>
+        </div>
+      </section>
+
+      <!-- ── Format ── -->
+      <section class="card">
+        <p class="label">Format selected text</p>
+        <div class="format-row">
+          <button class="fmt-btn" id="fmtBold" title="Bold"><b>B</b></button>
+          <button class="fmt-btn" id="fmtItalic" title="Italic"><i>I</i></button>
+        </div>
+        <p class="tiny muted">Applies formatting directly to the highlighted text in the editor.</p>
+      </section>
+
+      <!-- ── Usage stats ── -->
+      <section class="card" id="usageCard">
+        <div class="usage-header">
+          <p class="label">Usage stats</p>
+          <button class="ghost-btn" id="resetUsageBtn" title="Reset all counters">Reset</button>
+        </div>
+        <div class="usage-grid">
+          <div class="usage-stat">
+            <span class="usage-val" id="statSessionRewrites">0</span>
+            <span class="usage-key">rewrites this session</span>
+          </div>
+          <div class="usage-stat">
+            <span class="usage-val" id="statSessionTokens">0</span>
+            <span class="usage-key">tokens this session</span>
+          </div>
+          <div class="usage-stat">
+            <span class="usage-val" id="statTotalRewrites">0</span>
+            <span class="usage-key">total rewrites</span>
+          </div>
+          <div class="usage-stat">
+            <span class="usage-val" id="statTotalTokens">0</span>
+            <span class="usage-key">total tokens</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Custom instruction ── -->
+      <section class="card">
+        <label class="label" for="customInstruction">Custom instruction</label>
+        <textarea id="customInstruction" rows="3" placeholder="Example: Make it concise and confident, keep my tone"></textarea>
+        <button id="customRewrite" class="primary-button full-width">Rewrite selected text</button>
+      </section>
+
+      <section class="status-wrap">
+        <p id="status" class="status">Highlight text on any page, then choose an action.</p>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

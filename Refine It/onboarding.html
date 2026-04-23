@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Refine It!</title>
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <div class="ob-shell">
+
+    <!-- ── Logo / Brand ──────────────────────────────────────────────── -->
+    <div class="ob-brand">
+      <img src="icons/icon48.png" alt="Refine It!" class="ob-logo" />
+      <span class="ob-brand-name">Refine It!</span>
+    </div>
+
+    <!-- ── Progress dots ─────────────────────────────────────────────── -->
+    <div class="ob-dots" id="obDots">
+      <span class="dot active" data-step="0"></span>
+      <span class="dot"        data-step="1"></span>
+      <span class="dot"        data-step="2"></span>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Step 0 — Welcome                                                -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="ob-step active" id="step-0">
+      <div class="ob-icon">✦</div>
+      <h1>Welcome to Refine It!</h1>
+      <p class="ob-sub">
+        Highlight any text in a writable field on any website and instantly
+        rewrite it — fix grammar, improve clarity, shorten, polish, and more.
+        Powered by AI.
+      </p>
+      <ul class="ob-features">
+        <li><span class="feat-icon">⚡</span> Works on LinkedIn, Gmail, Notion, GitHub, and everywhere else</li>
+        <li><span class="feat-icon">🤖</span> Supports OpenRouter, ChatGPT, and Gemini</li>
+        <li><span class="feat-icon">🌍</span> Auto-detects language — responds in the same language</li>
+        <li><span class="feat-icon">↩</span> Full undo / rewrite history per session</li>
+      </ul>
+      <button class="ob-btn primary" id="step0Next">Get started →</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Step 1 — Choose provider & enter API key                        -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="ob-step" id="step-1">
+      <div class="ob-icon">🔑</div>
+      <h1>Connect your AI</h1>
+      <p class="ob-sub">Choose a provider and paste your API key. You can change this later in the popup.</p>
+
+      <!-- Provider picker -->
+      <div class="ob-provider-tabs" id="obProviderTabs">
+        <button class="ob-tab active" data-prov="openrouter">OpenRouter</button>
+        <button class="ob-tab"        data-prov="openai">ChatGPT</button>
+        <button class="ob-tab"        data-prov="gemini">Gemini</button>
+      </div>
+
+      <!-- OpenRouter panel -->
+      <div class="ob-panel active" id="ob-panel-openrouter">
+        <label class="ob-label">API Key
+          <a href="https://openrouter.ai/keys" target="_blank" class="ob-link">Get a free key ↗</a>
+        </label>
+        <input type="password" id="obOrKey" class="ob-input" placeholder="sk-or-v1-…" autocomplete="off" />
+        <label class="ob-label mt">Model</label>
+        <select id="obOrModel" class="ob-select">
+          <option value="meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B (free)</option>
+          <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
+          <option value="mistralai/mistral-7b-instruct">Mistral 7B (free)</option>
+          <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
+          <option value="google/gemma-2-9b-it">Gemma 2 9B (free)</option>
+          <option value="deepseek/deepseek-r1">DeepSeek R1</option>
+        </select>
+      </div>
+
+      <!-- ChatGPT panel -->
+      <div class="ob-panel" id="ob-panel-openai">
+        <label class="ob-label">API Key
+          <a href="https://platform.openai.com/api-keys" target="_blank" class="ob-link">Get a key ↗</a>
+        </label>
+        <input type="password" id="obOaiKey" class="ob-input" placeholder="sk-…" autocomplete="off" />
+        <label class="ob-label mt">Model</label>
+        <select id="obOaiModel" class="ob-select">
+          <option value="gpt-4o-mini">GPT-4o Mini (recommended)</option>
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+        </select>
+      </div>
+
+      <!-- Gemini panel -->
+      <div class="ob-panel" id="ob-panel-gemini">
+        <label class="ob-label">API Key
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="ob-link">Get a free key ↗</a>
+        </label>
+        <input type="password" id="obGemKey" class="ob-input" placeholder="AIza…" autocomplete="off" />
+        <label class="ob-label mt">Model</label>
+        <select id="obGemModel" class="ob-select">
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash (recommended)</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        </select>
+      </div>
+
+      <div class="ob-status" id="step1Status"></div>
+
+      <div class="ob-row">
+        <button class="ob-btn ghost" id="step1Back">← Back</button>
+        <button class="ob-btn primary" id="step1Next">Save &amp; continue →</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- Step 2 — Try it                                                 -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <div class="ob-step" id="step-2">
+      <div class="ob-icon">🚀</div>
+      <h1>You're all set!</h1>
+      <p class="ob-sub">
+        Go to any website, click inside a text field, highlight some text, and
+        the <strong>Refine It!</strong> bubble will appear above your selection.
+      </p>
+
+      <div class="ob-demo-box">
+        <p class="ob-demo-label">Try it here ↓</p>
+        <textarea id="obDemoTextarea" class="ob-demo-textarea" rows="3"
+          placeholder="Type or paste some text here, then select it to see the bubble…">I writed this email quick and want it to sound more professional before sending it to my boss.</textarea>
+        <p class="ob-demo-hint">← Highlight the text above, then look for the bubble</p>
+      </div>
+
+      <div class="ob-tips">
+        <div class="ob-tip"><span class="tip-key">B</span> <span class="tip-key">I</span> Bold &amp; Italic buttons are in the bubble header</div>
+        <div class="ob-tip"><span class="tip-key">🕐</span> History button shows all rewrites this session</div>
+        <div class="ob-tip"><span class="tip-key">↩</span> Undo button reverts the last rewrite instantly</div>
+      </div>
+
+      <div class="ob-row">
+        <button class="ob-btn ghost" id="step2Back">← Change key</button>
+        <button class="ob-btn primary" id="step2Done">Start using Refine It! ✓</button>
+      </div>
+    </div>
+
+  </div><!-- /.ob-shell -->
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
