@@ -46,7 +46,7 @@ That's 6 steps for something that should take 1.
 
     → On **Notion**: Action items · Structure it · TL;DR
 
-So if you're writing a GitHub comment and you highlight some rough notes, you can hit "Bug report" and it rewrites them into a properly structured report with Summary, Steps to Reproduce, and Expected vs Actual Behavior — instantly.
+So if you're writing a GitHub comment and you highlight some rough notes, you can hit "Bug report" and it rewrites them into a properly structured report with Summary, Steps to Reproduce, and Expected vs Actual Behavior instantly.
 
 
 ## How to install
