@@ -1,7 +1,7 @@
 // ─── Endpoints ────────────────────────────────────────────────────────────────
 const OPENROUTER_URL  = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENAI_URL      = 'https://api.openai.com/v1/chat/completions';
-const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const CLAUDE_URL      = 'https://api.anthropic.com/v1/messages';
 
 const APP_TITLE = 'Refine It!';
 const APP_SITE  = 'chrome-extension://refine-this';
@@ -9,8 +9,8 @@ const APP_SITE  = 'chrome-extension://refine-this';
 // ─── Default models per provider ─────────────────────────────────────────────
 const DEFAULT_MODELS = {
   openrouter: 'meta-llama/llama-3.1-8b-instruct',
-  openai:     'gpt-4o-mini',
-  gemini:     'gemini-2.0-flash'
+  openai:     'gpt-5.4-mini',
+  claude:     'claude-sonnet-4-6'
 };
 
 // ─── Context-menu items ───────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ const MENU_ITEMS = {
   shorten:      'Shorten',
   polish:       'Polish',
   professional: 'Make professional',
-  friendly:     'Make friendly'
+  friendly:     'Make friendly',
 };
 
 const selectionCache = new Map();
@@ -97,6 +97,12 @@ chrome.tabs.onUpdated?.addListener((tabId, changeInfo) => {
 
 // ─── Message router ───────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // Only accept messages from this extension's own pages and content scripts.
+  // Reject any message that comes from an external web page (sender.id mismatch).
+  if (sender.id && sender.id !== chrome.runtime.id) {
+    sendResponse({ ok: false, error: 'Unauthorized sender.' });
+    return false;
+  }
   if (message?.type === 'REFINETHIS_REWRITE') {
     handleBubbleRewrite(message, sendResponse);
     return true;
@@ -225,6 +231,10 @@ async function handleBubbleRewrite(message, sendResponse) {
       sendResponse({ ok: false, error: 'No text to rewrite.' });
       return;
     }
+    if (text.length > 20000) {
+      sendResponse({ ok: false, error: 'Selected text is too long (max 20,000 characters). Please select a shorter passage.' });
+      return;
+    }
 
     const { rewrittenText, tokensUsed } = await callAI({ cfg, text, mode, customInstruction, contextBefore, contextAfter });
     if (!rewrittenText) {
@@ -245,7 +255,7 @@ async function loadProviderConfig() {
     'activeProvider',
     'openRouterApiKey', 'orModel',
     'openAiApiKey',     'oaiModel',
-    'geminiApiKey',     'gemModel',
+    'claudeApiKey',     'claudeModel',
     'langDetect',
     'contextAware'
   ]);
@@ -271,11 +281,11 @@ async function loadProviderConfig() {
       langDetect,
       contextAware
     },
-    gemini: {
-      provider:      'gemini',
-      providerLabel: 'Google Gemini',
-      apiKey:        (stored.geminiApiKey || '').trim(),
-      model:         stored.gemModel || DEFAULT_MODELS.gemini,
+    claude: {
+      provider:      'claude',
+      providerLabel: 'Anthropic Claude',
+      apiKey:        (stored.claudeApiKey || '').trim(),
+      model:         stored.claudeModel || DEFAULT_MODELS.claude,
       langDetect,
       contextAware
     }
@@ -297,8 +307,8 @@ async function callAI({ cfg, text, mode, customInstruction, contextBefore = '', 
   });
 
   let raw, tokensUsed = 0;
-  if (cfg.provider === 'gemini') {
-    ({ raw, tokensUsed } = await callGemini({ cfg, systemPrompt, userPrompt }));
+  if (cfg.provider === 'claude') {
+    ({ raw, tokensUsed } = await callClaude({ cfg, systemPrompt, userPrompt }));
   } else {
     ({ raw, tokensUsed } = await callOpenAICompatible({ cfg, systemPrompt, userPrompt }));
   }
@@ -346,34 +356,34 @@ async function callOpenAICompatible({ cfg, systemPrompt, userPrompt }) {
   return { raw: content, tokensUsed };
 }
 
-// ─── Gemini call ──────────────────────────────────────────────────────────────
-async function callGemini({ cfg, systemPrompt, userPrompt }) {
-  const url = `${GEMINI_BASE_URL}/${cfg.model}:generateContent?key=${cfg.apiKey}`;
-
+// ─── Claude call ──────────────────────────────────────────────────────────────
+async function callClaude({ cfg, systemPrompt, userPrompt }) {
   const payload = {
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-    generationConfig: { temperature: 0.4 }
+    model: cfg.model,
+    max_tokens: 4096,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userPrompt }]
   };
-
-  const response = await fetch(url, {
+  const response = await fetch(CLAUDE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': cfg.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
     body: JSON.stringify(payload)
   });
-
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Gemini request failed (${response.status}): ${errorText.substring(0, 200)}`);
+    throw new Error(`Claude request failed (${response.status}): ${errorText.substring(0, 200)}`);
   }
-
   const data = await response.json();
-  const content = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!content) throw new Error('Gemini returned an empty response.');
-  const tokensUsed = data?.usageMetadata?.totalTokenCount || 0;
+  const content = data?.content?.[0]?.text;
+  if (!content) throw new Error('Claude returned an empty response.');
+  const tokensUsed = (data?.usage?.input_tokens || 0) + (data?.usage?.output_tokens || 0);
   return { raw: content, tokensUsed };
 }
-
 // ─── Prompt builder ───────────────────────────────────────────────────────────
 function buildPrompts({ text, mode, customInstruction, contextBefore, contextAfter, langDetect, contextAware }) {
   const instructionMap = {
@@ -382,8 +392,10 @@ function buildPrompts({ text, mode, customInstruction, contextBefore, contextAft
     shorten:      'Rewrite the text to be shorter and tighter. Preserve the meaning and tone.',
     polish:       'Polish the writing so it sounds natural, smooth, and well written. Preserve the original meaning.',
     professional: 'Rewrite in a professional, polished, business-appropriate tone. Keep the meaning intact.',
-    friendly:     'Rewrite in a warm, friendly, natural tone. Preserve the meaning.'
+    friendly:     'Rewrite in a warm, friendly, natural tone. Preserve the meaning.',
   };
+
+  // ── Humanize: the full prompt IS the system prompt ────────────────────────
 
   const instruction = mode === 'custom'
     ? (customInstruction?.trim() || 'Rewrite this text so it reads better while keeping the same meaning and tone.')

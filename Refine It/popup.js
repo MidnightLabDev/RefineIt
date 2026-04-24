@@ -4,7 +4,7 @@ const APP_SITE  = 'chrome-extension://refine-this';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENAI_URL     = 'https://api.openai.com/v1/chat/completions';
-// Gemini uses a different endpoint pattern — handled in background.js
+
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
 const statusEl              = document.getElementById('status');
@@ -20,16 +20,19 @@ const panels     = Array.from(document.querySelectorAll('.provider-panel'));
 const orKeyInput  = document.getElementById('orKey');
 const orModelSel  = document.getElementById('orModel');
 const saveOrBtn   = document.getElementById('saveOrKey');
+const deleteOrBtn  = document.getElementById('deleteOrKey');
 
 // OpenAI / ChatGPT
 const oaiKeyInput = document.getElementById('oaiKey');
 const oaiModelSel = document.getElementById('oaiModel');
 const saveOaiBtn  = document.getElementById('saveOaiKey');
+const deleteOaiBtn = document.getElementById('deleteOaiKey');
 
-// Gemini
-const gemKeyInput = document.getElementById('gemKey');
-const gemModelSel = document.getElementById('gemModel');
-const saveGemBtn  = document.getElementById('saveGemKey');
+// Claude
+const claudeKeyInput = document.getElementById('claudeKey');
+const claudeModelSel = document.getElementById('claudeModel');
+const saveClaudeBtn  = document.getElementById('saveClaudeKey');
+const deleteClaudeBtn = document.getElementById('deleteClaudeKey');
 
 // Settings
 const langDetectToggle  = document.getElementById('langDetect');
@@ -45,9 +48,9 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
   // ── First-run: redirect to onboarding if no key and not yet onboarded ────────
   const onboardCheck = await chrome.storage.sync.get([
-    'onboardingDone', 'openRouterApiKey', 'openAiApiKey', 'geminiApiKey'
+    'onboardingDone', 'openRouterApiKey', 'openAiApiKey', 'claudeApiKey'
   ]).catch(() => ({}));
-  const hasAnyKey = !!(onboardCheck.openRouterApiKey || onboardCheck.openAiApiKey || onboardCheck.geminiApiKey);
+  const hasAnyKey = !!(onboardCheck.openRouterApiKey || onboardCheck.openAiApiKey || onboardCheck.claudeApiKey);
   if (!onboardCheck.onboardingDone && !hasAnyKey) {
     chrome.tabs.create({ url: chrome.runtime.getURL('onboarding.html') });
     window.close();
@@ -57,7 +60,7 @@ async function init() {
   const stored = await chrome.storage.sync.get([
     'openRouterApiKey', 'orModel',
     'openAiApiKey',     'oaiModel',
-    'geminiApiKey',     'gemModel',
+    'claudeApiKey',     'claudeModel',
     'activeProvider',
     'langDetect',
     'contextAware'
@@ -65,13 +68,13 @@ async function init() {
 
   // Restore keys
   if (stored.openRouterApiKey) orKeyInput.value  = stored.openRouterApiKey;
-  if (stored.openAiApiKey)     oaiKeyInput.value = stored.openAiApiKey;
-  if (stored.geminiApiKey)     gemKeyInput.value  = stored.gemKeyInput;
+  if (stored.openAiApiKey)     oaiKeyInput.value   = stored.openAiApiKey;
+  if (stored.claudeApiKey)     claudeKeyInput.value = stored.claudeApiKey;
 
   // Restore model selections
   if (stored.orModel)  setSelectValue(orModelSel,  stored.orModel);
-  if (stored.oaiModel) setSelectValue(oaiModelSel, stored.oaiModel);
-  if (stored.gemModel) setSelectValue(gemModelSel, stored.gemModel);
+  if (stored.oaiModel)    setSelectValue(oaiModelSel,    stored.oaiModel);
+  if (stored.claudeModel) setSelectValue(claudeModelSel, stored.claudeModel);
 
   // Restore active provider tab
   const provider = stored.activeProvider || 'openrouter';
@@ -116,17 +119,35 @@ saveOaiBtn.addEventListener('click', async () => {
   setStatus('OpenAI API key saved.', 'success');
 });
 
-saveGemBtn.addEventListener('click', async () => {
-  const key = gemKeyInput.value.trim();
-  if (!key) { setStatus('Paste your Google AI API key first.', 'error'); return; }
-  await chrome.storage.sync.set({ geminiApiKey: key });
-  setStatus('Gemini API key saved.', 'success');
+saveClaudeBtn.addEventListener('click', async () => {
+  const key = claudeKeyInput.value.trim();
+  if (!key) { setStatus('Paste your Anthropic API key first.', 'error'); return; }
+  await chrome.storage.sync.set({ claudeApiKey: key });
+  setStatus('Claude API key saved.', 'success');
+});
+
+deleteOrBtn.addEventListener('click', async () => {
+  await chrome.storage.sync.remove('openRouterApiKey');
+  orKeyInput.value = '';
+  setStatus('OpenRouter API key deleted.', 'success');
+});
+
+deleteOaiBtn.addEventListener('click', async () => {
+  await chrome.storage.sync.remove('openAiApiKey');
+  oaiKeyInput.value = '';
+  setStatus('OpenAI API key deleted.', 'success');
+});
+
+deleteClaudeBtn.addEventListener('click', async () => {
+  await chrome.storage.sync.remove('claudeApiKey');
+  claudeKeyInput.value = '';
+  setStatus('Claude API key deleted.', 'success');
 });
 
 // ─── Persist model selections ─────────────────────────────────────────────────
 orModelSel.addEventListener('change',  () => chrome.storage.sync.set({ orModel:  orModelSel.value }));
 oaiModelSel.addEventListener('change', () => chrome.storage.sync.set({ oaiModel: oaiModelSel.value }));
-gemModelSel.addEventListener('change', () => chrome.storage.sync.set({ gemModel: gemModelSel.value }));
+claudeModelSel.addEventListener('change', () => chrome.storage.sync.set({ claudeModel: claudeModelSel.value }));
 
 // ─── Persist settings toggles ─────────────────────────────────────────────────
 langDetectToggle.addEventListener('change',   () => chrome.storage.sync.set({ langDetect:   langDetectToggle.checked }));
@@ -245,7 +266,7 @@ async function runRewrite(mode) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function setBusy(isBusy) {
-  const all = [saveOrBtn, saveOaiBtn, saveGemBtn, customRewriteButton, fmtBoldBtn, fmtItalicBtn, ...actionButtons];
+  const all = [saveOrBtn, saveOaiBtn, saveClaudeBtn, deleteOrBtn, deleteOaiBtn, deleteClaudeBtn, customRewriteButton, fmtBoldBtn, fmtItalicBtn, ...actionButtons];
   all.forEach(b => { b.disabled = isBusy; });
 }
 

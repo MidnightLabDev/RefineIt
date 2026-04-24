@@ -23,7 +23,7 @@
         <div class="provider-tabs" id="providerTabs">
           <button class="tab-btn active" data-provider="openrouter">OpenRouter</button>
           <button class="tab-btn" data-provider="openai">ChatGPT</button>
-          <button class="tab-btn" data-provider="gemini">Gemini</button>
+          <button class="tab-btn" data-provider="claude">Claude</button>
         </div>
 
         <!-- OpenRouter panel -->
@@ -32,6 +32,7 @@
           <div class="api-row">
             <input id="orKey" type="password" placeholder="sk-or-v1-..." autocomplete="off" />
             <button id="saveOrKey" class="secondary-button">Save</button>
+            <button id="deleteOrKey" class="icon-button danger-button" title="Delete API key">🗑</button>
           </div>
           <label class="sublabel mt8" for="orModel">Model</label>
           <select id="orModel">
@@ -60,31 +61,34 @@
           <div class="api-row">
             <input id="oaiKey" type="password" placeholder="sk-..." autocomplete="off" />
             <button id="saveOaiKey" class="secondary-button">Save</button>
+            <button id="deleteOaiKey" class="icon-button danger-button" title="Delete API key">🗑</button>
           </div>
           <label class="sublabel mt8" for="oaiModel">Model</label>
           <select id="oaiModel">
-            <option value="gpt-4o-mini">GPT-4o Mini (fast &amp; affordable)</option>
-            <option value="gpt-4o">GPT-4o</option>
-            <option value="gpt-4-turbo">GPT-4 Turbo</option>
-            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+            <option value="gpt-5.4-nano">GPT-5.4 Nano (fastest)</option>
+            <option value="gpt-5.4-mini">GPT-5.4 Mini (fast &amp; affordable)</option>
+            <option value="gpt-5.4">GPT-5.4</option>
+            <option value="gpt-5.4-pro">GPT-5.4 Pro (most capable)</option>
+            <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+          </select>
+        </div>
+        <!-- Claude panel -->
+        <div class="provider-panel hidden" id="panel-claude">
+          <label class="sublabel" for="claudeKey">Anthropic API Key</label>
+          <div class="api-row">
+            <input id="claudeKey" type="password" placeholder="sk-ant-..." autocomplete="off" />
+            <button id="saveClaudeKey" class="secondary-button">Save</button>
+            <button id="deleteClaudeKey" class="icon-button danger-button" title="Delete API key">&#128465;</button>
+          </div>
+          <label class="sublabel mt8" for="claudeModel">Model</label>
+          <select id="claudeModel">
+            <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (recommended)</option>
+            <option value="claude-opus-4-7">Claude Opus 4.7 (most capable)</option>
+            <option value="claude-haiku-4-5">Claude Haiku 4.5 (fast)</option>
           </select>
         </div>
 
-        <!-- Gemini panel -->
-        <div class="provider-panel hidden" id="panel-gemini">
-          <label class="sublabel" for="gemKey">Google AI API Key</label>
-          <div class="api-row">
-            <input id="gemKey" type="password" placeholder="AIza..." autocomplete="off" />
-            <button id="saveGemKey" class="secondary-button">Save</button>
-          </div>
-          <label class="sublabel mt8" for="gemModel">Model</label>
-          <select id="gemModel">
-            <option value="gemini-2.0-flash">Gemini 2.0 Flash (fast)</option>
-            <option value="gemini-2.0-flash-thinking-exp">Gemini 2.0 Flash Thinking</option>
-            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          </select>
-        </div>
+
       </section>
 
       <!-- ── Settings ── -->

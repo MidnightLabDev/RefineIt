@@ -451,7 +451,8 @@ function showBubble(selectionRect) {
     const btn = document.createElement('button');
     btn.textContent = label;
     btn.dataset.mode = mode;
-    styleActionBtn(btn);
+    // Humanize gets a distinct teal/green style to signal it's a special mode
+    styleActionBtn(btn, false, false);
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       runBubbleRewrite(mode, null, bubble);
@@ -859,7 +860,7 @@ function showBubble(selectionRect) {
 }
 
 function styleActionBtn(btn, isPlatform = false) {
-  // Platform actions get a teal/cyan tint to visually distinguish them
+  // Platform: teal; Default: purple
   const bg     = isPlatform ? 'rgba(20, 184, 166, 0.12)' : 'rgba(139, 92, 246, 0.12)';
   const border = isPlatform ? 'rgba(20, 184, 166, 0.35)'  : 'rgba(139, 92, 246, 0.35)';
   const color  = isPlatform ? '#5eead4'                    : '#c4b5fd';
@@ -1027,33 +1028,16 @@ async function runBubbleRewrite(mode, customInstruction, bubble) {
   try {
     settings = await chrome.storage.sync.get([
       'activeProvider',
-      'openRouterApiKey', 'orModel',
-      'openAiApiKey',     'oaiModel',
-      'geminiApiKey',     'gemModel',
-      'langDetect',       'contextAware'
+      'orModel',
+      'oaiModel',
+      'claudeModel',
+      'langDetect', 'contextAware'
     ]);
   } catch (_) {}
 
   const provider = (settings.activeProvider || 'openrouter').toLowerCase();
 
-  // Validate the correct API key for the active provider
-  let apiKey = '';
-  let providerLabel = '';
-  if (provider === 'openai') {
-    apiKey = (settings.openAiApiKey || '').trim();
-    providerLabel = 'ChatGPT (OpenAI)';
-  } else if (provider === 'gemini') {
-    apiKey = (settings.geminiApiKey || '').trim();
-    providerLabel = 'Gemini';
-  } else {
-    apiKey = (settings.openRouterApiKey || '').trim();
-    providerLabel = 'OpenRouter';
-  }
-
-  if (!apiKey) {
-    setBubbleStatus(bubble, `Add your ${providerLabel} API key in the extension popup first.`, 'error');
-    return;
-  }
+  // API key validation is handled in background.js — keys are not read in content script.
 
   if (mode === 'custom' && !customInstruction) {
     setBubbleStatus(bubble, 'Enter a custom instruction first.', 'error');

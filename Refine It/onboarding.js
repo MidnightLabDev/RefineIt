@@ -142,7 +142,8 @@ document.getElementById('step2Back').addEventListener('click', () => goTo(1));
     'Shorten':          'shorten',
     'Polish':           'polish',
     'Professional':     'professional',
-    'Friendly':         'friendly'
+    'Friendly':         'friendly',
+    '🧬 Humanize':      'humanize'
   };
   const ACTIONS = Object.keys(MODE_MAP);
 

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Refine It!",
-  "version": "1.0",
-  "description": "AI-powered text rewriting on any website. Highlight text, pick a style, and it rewrites in place. Supports OpenRouter, ChatGPT, and Gemini. By Mayas Ötegen",
+  "version": "1.1",
+  "description": "AI-powered text rewriting on any website. Highlight text, pick a style, and it rewrites in place. Supports OpenRouter, ChatGPT, and Claude.",
   "permissions": [
     "activeTab",
     "storage",
@@ -13,7 +13,7 @@
   "host_permissions": [
     "https://openrouter.ai/*",
     "https://api.openai.com/*",
-    "https://generativelanguage.googleapis.com/*",
+    "https://api.anthropic.com/*",
     "<all_urls>"
   ],
   "action": {
@@ -22,8 +22,15 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["onboarding.html", "onboarding.css", "onboarding.js", "icons/*.png"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "onboarding.html",
+        "onboarding.css",
+        "onboarding.js",
+        "icons/*.png"
+      ],
+      "matches": [
+        "chrome-extension://*/*"
+      ]
     }
   ],
   "content_scripts": [
@@ -35,8 +42,7 @@
         "content.js"
       ],
       "run_at": "document_idle",
-      "all_frames": true,
-      "match_about_blank": true
+      "all_frames": true
     }
   ],
   "icons": {
@@ -47,5 +53,8 @@
   },
   "background": {
     "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none';"
   }
 }
