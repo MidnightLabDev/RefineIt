@@ -101,7 +101,7 @@ Get your key → [console.anthropic.com/settings/keys](https://console.anthropic
 1. Go to any website with a text field (Gmail, GitHub, Notion, LinkedIn, anywhere)
 2. Click inside the text box and type or paste some text
 3. Highlight the words you want to rewrite
-4. A bubble appears above your selection — pick a mode or type a custom instruction
+4. A bubble appears above your selection > pick a mode or type a custom instruction
 5. The text rewrites itself in place
 
 That's the whole flow. No popups, no tab switching, no friction.
