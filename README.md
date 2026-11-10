@@ -11,7 +11,7 @@ Highlight any text in any text box, email, comment, doc, ticket, anything and a 
 
 No tab switching. No copy-pasting. No leaving the page.
 
-<img width="2752" height="1536" alt="refine-it-teaser" src="https://github.com/user-attachments/assets/0bfce63f-6c64-4b25-8fde-79b20819a166" />
+<img width="2752" height="1536" alt="refine-it-teaser" src="assets/refine-it-teaser.png" />
 </div>
 
 
