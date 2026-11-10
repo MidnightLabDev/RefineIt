@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Refine It!",
-  "version": "1.1",
+  "version": "1.2",
   "description": "AI-powered text rewriting on any website. Highlight text, pick a style, and it rewrites in place. Supports OpenRouter, ChatGPT, and Claude.",
   "permissions": [
     "activeTab",

@@ -69,29 +69,28 @@ Refine It! uses your own API key: **OpenRouter** (free models available), **Chat
 ## Supported AI providers & models
 
 ### OpenRouter
-Access hundreds of models through a single key. Several are free.
+Access hundreds of models through a single key, including free ones.
 
-Popular options available: Llama 3.3 70B, Mistral 7B, Gemma 3 27B, DeepSeek R1, and more.
+Built in: Llama 3.1 8B (default), Llama 3.3 70B, Llama 4 Maverick, Gemma 4 31B (free), Mistral Small 3.2, DeepSeek V4 Flash and DeepSeek R1.
 
 Get your key → [openrouter.ai/keys](https://openrouter.ai/workspaces/default/keys)
 
 ### ChatGPT (OpenAI)
 | Model | Notes |
 |---|---|
-| GPT-5.4 Nano | Fastest |
-| GPT-5.4 Mini | Fast & affordable · **default** |
+| GPT-6 Luna | Fast & cheapest · **default** |
+| GPT-5.4 Mini | Fast |
 | GPT-5.4 | Balanced |
-| GPT-5.4 Pro | Most capable |
-| GPT-4.1 Mini | Reliable fallback |
+| GPT-6 Sol | Most capable |
 
 Get your key → [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
 ### Claude (Anthropic)
 | Model | Notes |
 |---|---|
-| Claude Sonnet 4.6 | Recommended · **default** |
-| Claude Opus 4.7 | Most capable |
-| Claude Haiku 4.5 | Fast |
+| Claude Sonnet 5.5 | Recommended · **default** |
+| Claude Opus 5.5 | Most capable |
+| Claude Haiku 5.5 | Fast |
 
 Get your key → [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
 

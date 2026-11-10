@@ -77,7 +77,10 @@ async function init() {
   if (stored.claudeModel) setSelectValue(claudeModelSel, stored.claudeModel);
 
   // Restore active provider tab
-  const provider = stored.activeProvider || 'openrouter';
+  // Older onboarding could save 'gemini', which Refine It never supported.
+  const provider = ['openrouter', 'openai', 'claude'].includes(stored.activeProvider)
+    ? stored.activeProvider
+    : 'openrouter';
   switchProvider(provider);
 
   // Restore settings toggles

@@ -35,7 +35,7 @@
       </p>
       <ul class="ob-features">
         <li><span class="feat-icon">⚡</span> Works on LinkedIn, Gmail, Notion, GitHub, and everywhere else</li>
-        <li><span class="feat-icon">🤖</span> Supports OpenRouter, ChatGPT, and Gemini</li>
+        <li><span class="feat-icon">🤖</span> Supports OpenRouter, ChatGPT, and Claude</li>
         <li><span class="feat-icon">🌍</span> Auto-detects language — responds in the same language</li>
         <li><span class="feat-icon">↩</span> Full undo / rewrite history per session</li>
       </ul>
@@ -54,23 +54,32 @@
       <div class="ob-provider-tabs" id="obProviderTabs">
         <button class="ob-tab active" data-prov="openrouter">OpenRouter</button>
         <button class="ob-tab"        data-prov="openai">ChatGPT</button>
-        <button class="ob-tab"        data-prov="gemini">Gemini</button>
+        <button class="ob-tab"        data-prov="claude">Claude</button>
       </div>
 
       <!-- OpenRouter panel -->
       <div class="ob-panel active" id="ob-panel-openrouter">
         <label class="ob-label">API Key
-          <a href="https://openrouter.ai/keys" target="_blank" class="ob-link">Get a free key ↗</a>
+          <a href="https://openrouter.ai/keys" target="_blank" class="ob-link">Get a key ↗</a>
         </label>
         <input type="password" id="obOrKey" class="ob-input" placeholder="sk-or-v1-…" autocomplete="off" />
         <label class="ob-label mt">Model</label>
         <select id="obOrModel" class="ob-select">
-          <option value="meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B (free)</option>
-          <option value="meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B</option>
-          <option value="mistralai/mistral-7b-instruct">Mistral 7B (free)</option>
-          <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
-          <option value="google/gemma-2-9b-it">Gemma 2 9B (free)</option>
-          <option value="deepseek/deepseek-r1">DeepSeek R1</option>
+          <optgroup label="Meta Llama">
+            <option value="meta-llama/llama-3.1-8b-instruct">Llama 3.1 8B Instruct (fastest, near free)</option>
+            <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B Instruct</option>
+            <option value="meta-llama/llama-4-maverick">Llama 4 Maverick</option>
+          </optgroup>
+          <optgroup label="Google">
+            <option value="google/gemma-4-31b-it:free">Gemma 4 31B (free)</option>
+          </optgroup>
+          <optgroup label="Mistral">
+            <option value="mistralai/mistral-small-3.2-24b-instruct">Mistral Small 3.2 24B</option>
+          </optgroup>
+          <optgroup label="DeepSeek">
+            <option value="deepseek/deepseek-v4-flash">DeepSeek V4 Flash</option>
+            <option value="deepseek/deepseek-r1-0528">DeepSeek R1</option>
+          </optgroup>
         </select>
       </div>
 
@@ -82,24 +91,24 @@
         <input type="password" id="obOaiKey" class="ob-input" placeholder="sk-…" autocomplete="off" />
         <label class="ob-label mt">Model</label>
         <select id="obOaiModel" class="ob-select">
-          <option value="gpt-4o-mini">GPT-4o Mini (recommended)</option>
-          <option value="gpt-4o">GPT-4o</option>
-          <option value="gpt-4-turbo">GPT-4 Turbo</option>
-          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-6-luna">GPT-6 Luna (fast &amp; cheapest)</option>
+          <option value="gpt-5.4-mini">GPT-5.4 Mini</option>
+          <option value="gpt-5.4">GPT-5.4</option>
+          <option value="gpt-6-sol">GPT-6 Sol (most capable)</option>
         </select>
       </div>
 
-      <!-- Gemini panel -->
-      <div class="ob-panel" id="ob-panel-gemini">
+      <!-- Claude panel -->
+      <div class="ob-panel" id="ob-panel-claude">
         <label class="ob-label">API Key
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="ob-link">Get a free key ↗</a>
+          <a href="https://console.anthropic.com/settings/keys" target="_blank" class="ob-link">Get a key ↗</a>
         </label>
-        <input type="password" id="obGemKey" class="ob-input" placeholder="AIza…" autocomplete="off" />
+        <input type="password" id="obClaudeKey" class="ob-input" placeholder="sk-ant-…" autocomplete="off" />
         <label class="ob-label mt">Model</label>
-        <select id="obGemModel" class="ob-select">
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash (recommended)</option>
-          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+        <select id="obClaudeModel" class="ob-select">
+          <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (recommended)</option>
+          <option value="claude-opus-5-5">Claude Opus 5.5 (most capable)</option>
+          <option value="claude-haiku-5-5">Claude Haiku 5.5 (fast)</option>
         </select>
       </div>
 

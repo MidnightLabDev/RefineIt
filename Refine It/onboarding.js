@@ -37,9 +37,9 @@ document.getElementById('step1Next').addEventListener('click', async () => {
   } else if (activeProvider === 'openai') {
     saveData.openAiApiKey = key.trim();
     saveData.oaiModel = model;
-  } else if (activeProvider === 'gemini') {
-    saveData.geminiApiKey = key.trim();
-    saveData.gemModel = model;
+  } else if (activeProvider === 'claude') {
+    saveData.claudeApiKey = key.trim();
+    saveData.claudeModel = model;
   }
 
   try {
@@ -83,10 +83,10 @@ function getActiveKeyAndModel() {
       model: document.getElementById('obOaiModel').value
     };
   }
-  // gemini
+  // claude
   return {
-    key:   document.getElementById('obGemKey').value,
-    model: document.getElementById('obGemModel').value
+    key:   document.getElementById('obClaudeKey').value,
+    model: document.getElementById('obClaudeModel').value
   };
 }
 
@@ -102,10 +102,10 @@ function setStep1Status(msg, type = '') {
       'activeProvider',
       'openRouterApiKey', 'orModel',
       'openAiApiKey',     'oaiModel',
-      'geminiApiKey',     'gemModel'
+      'claudeApiKey',     'claudeModel'
     ]);
 
-    if (stored.activeProvider) {
+    if (['openrouter', 'openai', 'claude'].includes(stored.activeProvider)) {
       activeProvider = stored.activeProvider;
       provTabs.forEach(t => t.classList.toggle('active', t.dataset.prov === activeProvider));
       panels.forEach(p => p.classList.toggle('active', p.id === `ob-panel-${activeProvider}`));
@@ -113,11 +113,11 @@ function setStep1Status(msg, type = '') {
 
     if (stored.openRouterApiKey) document.getElementById('obOrKey').value  = stored.openRouterApiKey;
     if (stored.openAiApiKey)     document.getElementById('obOaiKey').value = stored.openAiApiKey;
-    if (stored.geminiApiKey)     document.getElementById('obGemKey').value = stored.geminiApiKey;
+    if (stored.claudeApiKey)     document.getElementById('obClaudeKey').value = stored.claudeApiKey;
 
     if (stored.orModel)  setSelectValue('obOrModel',  stored.orModel);
     if (stored.oaiModel) setSelectValue('obOaiModel', stored.oaiModel);
-    if (stored.gemModel) setSelectValue('obGemModel', stored.gemModel);
+    if (stored.claudeModel) setSelectValue('obClaudeModel', stored.claudeModel);
   } catch (_) {}
 })();
 

@@ -9,9 +9,26 @@ const APP_SITE  = 'chrome-extension://refine-this';
 // ─── Default models per provider ─────────────────────────────────────────────
 const DEFAULT_MODELS = {
   openrouter: 'meta-llama/llama-3.1-8b-instruct',
-  openai:     'gpt-5.4-mini',
-  claude:     'claude-sonnet-4-6'
+  openai:     'gpt-6-luna',
+  claude:     'claude-sonnet-5-5'
 };
+
+// Models offered in the popup. A saved model that is no longer offered
+// (for example one its provider has retired) falls back to the default.
+const SUPPORTED_MODELS = {
+  openrouter: [
+    'meta-llama/llama-3.1-8b-instruct', 'meta-llama/llama-3.3-70b-instruct',
+    'meta-llama/llama-4-maverick', 'google/gemma-4-31b-it:free',
+    'mistralai/mistral-small-3.2-24b-instruct', 'deepseek/deepseek-v4-flash',
+    'deepseek/deepseek-r1-0528'
+  ],
+  openai: ['gpt-6-luna', 'gpt-5.4-mini', 'gpt-5.4', 'gpt-6-sol'],
+  claude: ['claude-sonnet-5-5', 'claude-opus-5-5', 'claude-haiku-5-5']
+};
+
+function pickModel(provider, saved) {
+  return SUPPORTED_MODELS[provider].includes(saved) ? saved : DEFAULT_MODELS[provider];
+}
 
 // ─── Context-menu items ───────────────────────────────────────────────────────
 const MENU_ROOT  = 'refine-this-root';
@@ -269,7 +286,7 @@ async function loadProviderConfig() {
       provider:      'openrouter',
       providerLabel: 'OpenRouter',
       apiKey:        (stored.openRouterApiKey || '').trim(),
-      model:         stored.orModel  || DEFAULT_MODELS.openrouter,
+      model:         pickModel('openrouter', stored.orModel),
       langDetect,
       contextAware
     },
@@ -277,7 +294,7 @@ async function loadProviderConfig() {
       provider:      'openai',
       providerLabel: 'OpenAI (ChatGPT)',
       apiKey:        (stored.openAiApiKey || '').trim(),
-      model:         stored.oaiModel || DEFAULT_MODELS.openai,
+      model:         pickModel('openai', stored.oaiModel),
       langDetect,
       contextAware
     },
@@ -285,7 +302,7 @@ async function loadProviderConfig() {
       provider:      'claude',
       providerLabel: 'Anthropic Claude',
       apiKey:        (stored.claudeApiKey || '').trim(),
-      model:         stored.claudeModel || DEFAULT_MODELS.claude,
+      model:         pickModel('claude', stored.claudeModel),
       langDetect,
       contextAware
     }
@@ -331,12 +348,18 @@ async function callOpenAICompatible({ cfg, systemPrompt, userPrompt }) {
 
   const payload = {
     model: cfg.model,
-    temperature: 0.4,
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user',   content: userPrompt }
     ]
   };
+
+  if (cfg.provider === 'openai') {
+    // Current OpenAI models reason by default; rewriting needs speed, not reasoning.
+    payload.reasoning_effort = 'none';
+  } else {
+    payload.temperature = 0.4;
+  }
 
   const response = await fetch(url, {
     method: 'POST',
